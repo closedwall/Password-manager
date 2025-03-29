@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
-from random import randint, choice, randint, shuffle
+from random import randint, choice, shuffle
 import pyperclip
+from cryptography.fernet import Fernet
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 
@@ -39,7 +40,11 @@ def save_data():
                                                                    f" \nEmail: {username_data}\nPassword:"
                                                                    f" {password_data} \n Is it ok to save?")
         if is_ok:
-            data = f"{website_data} | {username_data} | {password_data}"
+            key = Fernet.generate_key()
+            f = Fernet(key)
+            token = f.encrypt(bytes(password_data, 'utf-8'))
+            print(token)
+            data = f"{website_data} | {username_data} | {token}"
             save_to_file(data)
             print("Password saved")
             websiteEntry.delete(0, END)
